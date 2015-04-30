@@ -150,17 +150,19 @@ def assemble_cloudconfig( library_file,  appyml_file, envfiles=[]  ):
         except: continue #this section doesn not exist
         secid=coreos_sectionIDs[asec] #'name'
         items=[]
-        for anitem in appitems:
-            #get the item from 'library/template'
+        for anitem in appitems:#skeleton items
+            #get the item from 'library/template/master'
             try:
                 libraryitem=get_ymlitem(asec,anitem[secid],ymllibo)
-           #               = {'name':etcd.service,contents: ...}
+           #               = {'name':etcd.service,'contents': ...}
             except:
-                raise ValueError("'"+asec+"'"\
-                                 +' section does not exist in master file')
+                #section does not exist in master file.
+                libraryitem={}
             if libraryitem==None:
-                raise ValueError("'"+asec+"'"+anitem[secid]\
-                                 +' doest not exist in master file')
+                #section.item does not exist in master file
+                libraryitem={}
+            #allow for the skeleton to overwrite the master
+            libraryitem.update(anitem)
             #HACKKK
             acc=_dot2brackets(asec)
             items.append(libraryitem)
