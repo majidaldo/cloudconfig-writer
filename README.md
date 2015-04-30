@@ -124,6 +124,7 @@ write_files:
 - content: "#this should go in as VAR=${VAR}\nVAR=${VAR}\n\n \n"
   path: /home/core/vartest.script
 ```
+The output is not as human-friendly as our example master file but it's still a valid CoreOS cloud-config file.
 
 You can supply multiple env files. Values of variables with the same name will be replaced with the value of its later occurance. Check again if you missed a variable by using the `unassigned` sub-command with the env files.
 
@@ -131,6 +132,8 @@ You can supply multiple env files. Values of variables with the same name will b
 > python constructor.py unassigned samples/user-data.master.yaml samples/skeleton.yaml samples/env1 samples/env2
 ```
 In this example, `VAR` still has no value.
+
+
 
 ## Miscellaneous
 - The processing presented here is basic (on purpose). However, it can form the basis for more sophisticated processing.
