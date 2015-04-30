@@ -1,0 +1,4 @@
+REGISTRY_HOST=ASDF:80
+#SDF=ff
+#see the below hostname will be overriden
+HOSTNAME=NOTONE

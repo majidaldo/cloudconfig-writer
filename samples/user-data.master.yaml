@@ -1,0 +1,75 @@
+#cloud-config
+
+
+hostname: $HOSTNAME
+
+write_files:
+
+  - path: /etc/resolv.conf
+    permissions: 0644
+    owner: root
+    content: |
+      nameserver 8.8.8.8
+  - path: /etc/motd
+    permissions: 0644
+    owner: root
+    content: |
+      Good news, everyone!
+#encodings are not working even though it's in
+#the coreos docs
+  - path: /tmp/like_this
+    permissions: 0644
+    owner: root
+    encoding: gzip
+    content: !!binary |
+      H4sIAKgdh1QAAwtITM5WyK1USMqvUCjPLMlQSMssS1VIya9KzVPIySwszS9SyCpNLwYARQFQ5CcAAAA=
+  - path: /tmp/or_like_this
+    permissions: 0644
+    owner: root
+    encoding: gzip+base64
+    content: |
+      H4sIAKgdh1QAAwtITM5WyK1USMqvUCjPLMlQSMssS1VIya9KzVPIySwszS9SyCpNLwYARQFQ5CcAAAA=
+  - path: /tmp/todolist
+    permissions: 0644
+    owner: root
+    encoding: base64
+    content: |
+      UGFjayBteSBib3ggd2l0aCBmaXZlIGRvemVuIGxpcXVvciBqdWdz
+  - path: /home/core/vartest.script
+    content: |
+      #this should go in as VAR=${VAR}
+      VAR==
+  
+       
+coreos:
+  etcd2:
+    # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
+    discovery: https://discovery.etcd.io/<token>
+    # multi-region and multi-cloud deployments need to use $public_ipv4
+    advertise-client-urls: http://$public_ipv4:2379
+    initial-advertise-peer-urls: http://$private_ipv4:2380
+    # listen on both the official ports and the legacy ports
+    # legacy ports can be omitted if your application doesn't depend on them
+    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
+    listen-peer-urls: http://$private_ipv4:2380,http://$private_ipv4:7001
+  fleet:
+    public-ip: $public_ipv4
+    metadata: "loc=local , role=init"
+  units:
+    - name: fleet.service
+      command: start
+    - name: docker.service
+      command: start
+      drop-ins:
+        - name: 50-insecure-registry.conf
+          content: |
+            [Service]
+            Environment=DOCKER_OPTS='--insecure-registry="10.0.1.0/24"'
+            
+
+users:
+  - name: elroy
+    passwd: abc123
+    groups:
+      - sudo
+      - docker

@@ -1,0 +1,17 @@
+#cloud-config
+coreos:
+  fleet:
+    metadata: loc=local , role=init
+    public-ip: $public_ipv4
+  units:
+  - name: docker.service
+
+
+hostname: $HOSTNAME
+users:
+  - name: elroy
+write_files:
+
+- path: /etc/resolv.conf
+- path: /etc/motd
+- path: /home/core/vartest.script
