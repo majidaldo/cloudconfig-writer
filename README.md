@@ -133,6 +133,8 @@ You can supply multiple env files. Values of variables with the same name will b
 ```
 In this example, `VAR` still has no value.
 
+#####Advanced Usage: 'Derive' a cloud-init file
+When generating a cloud-init file, contents in the skeleton file will override their counterparts in the master file. Furthermore, content that does not exist in the master file will appear in the generated file. When combined with the fact that variables in env files will be overriden as well, this achieves a rudimentary, object-oriented-like functionality.
 
 
 ## Miscellaneous
