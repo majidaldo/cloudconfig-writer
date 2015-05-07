@@ -102,6 +102,7 @@ def subs(astr,subs_dict):
     subs_dict=sd
     astr=repl_myassignments(astr)
     p = re.compile(var_regex, re.VERBOSE)
+
     def repl(match):
         s=match.start()
         e=match.end()
@@ -111,6 +112,27 @@ def subs(astr,subs_dict):
         except:
             subs_dict[var]=None
             return subs_dict[var]
+        
+    #replacements within dictionary. nested replacements
+    # VAR=1
+    # VAR1=$VAR
+    # VAR2=$VAR1
+    # VAR3=$VAR2
+    # ANOTHERVAR=${UNDEFINED}
+    # will loop until VAR, VAR1, VAR2, VAR3 all = 1
+    def nv(): return len(get_vars(''.join(subs_dict.values())))
+    while True:
+        pnv=nv()
+        subs_dict2=subs_dict.copy()
+        for avar,aval in subs_dict2.iteritems():
+            subs_dict2[avar]=p.sub(repl,aval)
+        subs_dict.update(subs_dict2)
+        cnv=nv();
+        #loop until can't make any more replacements
+        if cnv==pnv: break
+    #print subs_dict#check
+    
+    #replacements in yaml
     return p.sub(repl,astr)
 
 
