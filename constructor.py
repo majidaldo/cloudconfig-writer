@@ -142,7 +142,8 @@ def read_envfile(envfile):
     for aline in envfile:
         if aline[0]=='#': continue
         if '=' not in aline: continue
-        var,val=aline.split('=')
+        ei=aline.find('=')
+        var,val=aline[:ei],aline[ei+1:]
         var=var.strip()
         val=val.strip()
         envs[var]=val
